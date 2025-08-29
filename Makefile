@@ -37,8 +37,6 @@ $(TOOLS_DIR) $(LIB_DIR):
 JAVA_SOURCES      := $(shell find $(SRC_MAIN) -name "*.java")
 JAVA_TEST_SOURCES := $(shell find $(SRC_TEST) -name "*.java")
 
-CP =
-
 CPT = $(JUNIT_BIN):$(TEST_BUILD):$(MAIN_BUILD)
 
 build: clean/build/main

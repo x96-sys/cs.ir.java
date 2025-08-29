@@ -1,0 +1,29 @@
+package org.x96.sys.cs.ir.manuscript.manifest.characterization.facet.terminals;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.x96.sys.io.TestUtils.assertPrintLn;
+
+import org.junit.jupiter.api.Test;
+
+class RangeTest {
+    @Test
+    void happy() {
+        Range range = new Range(new Natural(0x73), new Natural(0x74));
+        assertArrayEquals("Range".getBytes(), range.label().raw());
+        assertPrintLn(
+                """
+                Range
+                    :from Natural > 115
+                    :to Natural > 116\
+                """,
+                () -> range.prettyPrint(""));
+
+        assertPrintLn(
+                """
+                :Range
+                    ::from Natural > 115
+                    ::to Natural > 116\
+                """,
+                () -> range.prettyPrint(":"));
+    }
+}
