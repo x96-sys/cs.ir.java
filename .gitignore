@@ -3,3 +3,4 @@ lib
 tools
 .idea
 .zig-cache
+*.jar

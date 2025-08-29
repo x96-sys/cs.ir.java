@@ -39,6 +39,8 @@ JAVA_TEST_SOURCES := $(shell find $(SRC_TEST) -name "*.java")
 
 CPT = $(JUNIT_BIN):$(TEST_BUILD):$(MAIN_BUILD)
 
+DISTRO_JAR = org.x96.sys.cs.ir.jar
+
 build: clean/build/main
 	@echo "[☕️] [build] [main] [java] [`javac --version`]"
 	@javac -d $(MAIN_BUILD) $(JAVA_SOURCES)
@@ -117,6 +119,10 @@ $(eval $(call deps,$(TOOLS_DIR),gjf,GJF))
 $(eval $(call deps,$(TOOLS_DIR),jacoco_cli,JACOCO_CLI))
 $(eval $(call deps,$(TOOLS_DIR),jacoco_agent,JACOCO_AGENT))
 
+distro:
+	@jar cf $(DISTRO_JAR) -C $(MAIN_BUILD) .
+	@echo "[☕️] [bin] [$(DISTRO_JAR)]"
+
 clean/build/main:
 	@rm -rf $(MAIN_BUILD)
 	@echo "[🧼] [clean] [$(MAIN_BUILD)]"
@@ -124,3 +130,4 @@ clean/build/main:
 clean/build/test:
 	@rm -rf $(TEST_BUILD)
 	@echo "[🧹] [clean] [$(TEST_BUILD)]"
+
