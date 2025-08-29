@@ -10,7 +10,7 @@ public record Range(Natural from, Natural to) implements Fleck, IR {
 
     public void prettyPrint(String indent) {
         System.out.println(indent + new String(label().raw()));
-        from.prettyPrint(" ".repeat(4) + indent +  ":from ");
+        from.prettyPrint(" ".repeat(4) + indent + ":from ");
         to.prettyPrint(" ".repeat(4) + indent + ":to ");
     }
 }

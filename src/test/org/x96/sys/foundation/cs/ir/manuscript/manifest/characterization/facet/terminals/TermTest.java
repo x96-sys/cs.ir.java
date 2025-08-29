@@ -1,47 +1,54 @@
 package org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.facet.terminals;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.x96.sys.foundation.io.TestUtils.assertPrintLn;
+
 import org.junit.jupiter.api.Test;
 import org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.facet.occurrence.Occurrence;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.x96.sys.foundation.io.TestUtils.assertPrintLn;
-
 class TermTest {
 
     @Test
-    void happy(){
+    void happy() {
         Term term = new Term(false, new Identity("cs".getBytes()), Optional.empty());
         assertEquals("Term", new String(term.label().raw()));
-        assertPrintLn("""
+        assertPrintLn(
+                """
                 :Term > Identity > cs\
-                """, () -> term.prettyPrint(":"));
-        assertPrintLn("""
+                """,
+                () -> term.prettyPrint(":"));
+        assertPrintLn(
+                """
                 Term > Identity > cs\
-                """, () -> term.prettyPrint(""));
+                """,
+                () -> term.prettyPrint(""));
     }
 
     @Test
-    void happyNegate(){
+    void happyNegate() {
         Term term = new Term(true, new Identity("cs".getBytes()), Optional.empty());
         assertEquals("Term", new String(term.label().raw()));
-        assertPrintLn("""
+        assertPrintLn(
+                """
                 :Term [!]
                     :Identity > cs\
-                """, () -> term.prettyPrint(":"));
-
+                """,
+                () -> term.prettyPrint(":"));
     }
 
     @Test
-    void happyNegateOneOrMore(){
-        Term term = new Term(true, new Identity("cs".getBytes()), Optional.of(Occurrence.OneOrMore));
+    void happyNegateOneOrMore() {
+        Term term =
+                new Term(true, new Identity("cs".getBytes()), Optional.of(Occurrence.OneOrMore));
         assertEquals("Term", new String(term.label().raw()));
-        assertPrintLn("""
+        assertPrintLn(
+                """
                 :Term [!] [+]
                     :Identity > cs
                     :Occurrence > +\
-                """, () -> term.prettyPrint(":"));
-
+                """,
+                () -> term.prettyPrint(":"));
     }
 }

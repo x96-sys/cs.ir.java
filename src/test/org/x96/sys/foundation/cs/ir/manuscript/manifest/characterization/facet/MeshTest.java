@@ -1,5 +1,8 @@
 package org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.facet;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.x96.sys.foundation.io.TestUtils.assertPrintLn;
+
 import org.junit.jupiter.api.Test;
 import org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.facet.occurrence.Occurrence;
 import org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.facet.terminals.Natural;
@@ -8,37 +11,36 @@ import org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.facet.t
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.x96.sys.foundation.io.TestUtils.assertPrintLn;
-
 class MeshTest {
     @Test
     void happy() {
-        Mesh mesh = new Mesh(new Nucleus[]{
-                new Text("cs".getBytes()),
-                new Natural(0x73)
-        }, Optional.empty());
+        Mesh mesh =
+                new Mesh(
+                        new Nucleus[] {new Text("cs".getBytes()), new Natural(0x73)},
+                        Optional.empty());
         assertEquals("Mesh", new String(mesh.label().raw()));
-        assertPrintLn("""
+        assertPrintLn(
+                """
                 Mesh
                     Text > cs
                     Natural > 115\
-                """, () -> mesh.prettyPrint(""));
-
+                """,
+                () -> mesh.prettyPrint(""));
     }
 
     @Test
     void happyOccurrence() {
-        Mesh mesh = new Mesh(new Nucleus[]{
-                new Text("cs".getBytes()),
-                new Natural(0x73)
-        }, Optional.of(Occurrence.OneOrMore));
+        Mesh mesh =
+                new Mesh(
+                        new Nucleus[] {new Text("cs".getBytes()), new Natural(0x73)},
+                        Optional.of(Occurrence.OneOrMore));
         assertEquals("Mesh", new String(mesh.label().raw()));
-        assertPrintLn("""
+        assertPrintLn(
+                """
                 Mesh [+]
                     Text > cs
                     Natural > 115\
-                """, () -> mesh.prettyPrint(""));
-
+                """,
+                () -> mesh.prettyPrint(""));
     }
 }

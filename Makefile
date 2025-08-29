@@ -1,121 +1,128 @@
-# Diretórios
-BUILD_DIR     = build
+BUILD_DIR     = out
 MAIN_BUILD    = $(BUILD_DIR)/main
-CLI_BUILD     = $(BUILD_DIR)/cli
 TEST_BUILD    = $(BUILD_DIR)/test
-COVERAGE_DIR  = $(BUILD_DIR)/coverage
-SRC_DIRS      = src/main src/cli src/test
 
-LIB_DIR       = lib
-TOOL_DIR      = tools
+SRC_MAIN      = src/main
+SRC_TEST      = src/test
 
-# Dependências
-FLUX_VERSION       = 1.0.0
-FLUX_JAR           = $(LIB_DIR)/org.x96.sys.foundation.io.jar
-FLUX_URL           = https://github.com/x96-sys/flux.java/releases/download/v$(FLUX_VERSION)/org.x96.sys.foundation.io.jar
-
-TOKENIZER_VERSION  = 0.1.4
-TOKENIZER_JAR      = $(LIB_DIR)/org.x96.sys.foundation.tokenizer.jar
-TOKENIZER_URL      = https://github.com/x96-sys/tokenizer.java/releases/download/$(TOKENIZER_VERSION)/org.x96.sys.foundation.tokenizer.jar
+LIB_DIR        = lib
+TOOLS_DIR      = tools
 
 JUNIT_VERSION = 1.13.4
-JUNIT_JAR     = $(TOOL_DIR)/junit-platform-console-standalone.jar
+JUNIT_BIN     = $(TOOLS_DIR)/junit-platform-console-standalone.jar
 JUNIT_URL     = https://maven.org/maven2/org/junit/platform/junit-platform-console-standalone/$(JUNIT_VERSION)/junit-platform-console-standalone-$(JUNIT_VERSION).jar
+JUNIT_SHA256  = 3fdfc37e29744a9a67dd5365e81467e26fbde0b7aa204e6f8bbe79eeaa7ae892
 
-GJF_VERSION   = 1.28.0
-GJF_JAR       = $(TOOL_DIR)/google-java-format.jar
-GJF_URL       = https://maven.org/maven2/com/google/googlejavaformat/google-java-format/$(GJF_VERSION)/google-java-format-$(GJF_VERSION)-all-deps.jar
+JACOCO_VERSION = 0.8.13
+JACOCO_BASE    = https://maven.org/maven2/org/jacoco
 
-JACOCO_VERSION   = 0.8.12
-JACOCO_JAR       = $(TOOL_DIR)/jacoco-agent.jar
-JACOCO_CLI       = $(TOOL_DIR)/jacoco-cli.jar
-JACOCO_AGENT_URL = https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/$(JACOCO_VERSION)/org.jacoco.agent-$(JACOCO_VERSION)-runtime.jar
-JACOCO_CLI_URL   = https://repo1.maven.org/maven2/org/jacoco/org.jacoco.cli/$(JACOCO_VERSION)/org.jacoco.cli-$(JACOCO_VERSION)-nodeps.jar
+JACOCO_CLI_VERSION = $(JACOCO_VERSION)
+JACOCO_CLI_BIN     = $(TOOLS_DIR)/jacococli.jar
+JACOCO_CLI_URL     = $(JACOCO_BASE)/org.jacoco.cli/$(JACOCO_CLI_VERSION)/org.jacoco.cli-$(JACOCO_CLI_VERSION)-nodeps.jar
+JACOCO_CLI_SHA256  = 8f748683833d4dc4d72cea5d6b43f49344687b831e0582c97bcb9b984e3de0a3
 
-# Classpaths
-CP_MAIN  = $(FLUX_JAR):$(TOKENIZER_JAR)
-CP_TEST  = $(MAIN_BUILD):$(CP_MAIN):$(JUNIT_JAR)
-CP_CLI   = $(MAIN_BUILD):$(CP_MAIN)
+JACOCO_AGENT_VERSION = $(JACOCO_VERSION)
+JACOCO_AGENT_BIN     = $(TOOLS_DIR)/jacocoagent-runtime.jar
+JACOCO_AGENT_URL     = $(JACOCO_BASE)/org.jacoco.agent/$(JACOCO_AGENT_VERSION)/org.jacoco.agent-$(JACOCO_AGENT_VERSION)-runtime.jar
+JACOCO_AGENT_SHA256  = 47e700ccb0fdb9e27c5241353f8161938f4e53c3561dd35e063c5fe88dc3349b
 
-# Fontes
-JAVA_SOURCES = $(shell find $(SRC_DIRS) -name "*.java")
+GJF_VERSION = 1.28.0
+GJF_BIN     = $(TOOLS_DIR)/gjf.jar
+GJF_URL     = https://maven.org/maven2/com/google/googlejavaformat/google-java-format/$(GJF_VERSION)/google-java-format-$(GJF_VERSION)-all-deps.jar
+GJF_SHA256  = 32342e7c1b4600f80df3471da46aee8012d3e1445d5ea1be1fb71289b07cc735
 
-# Artefato distribuível
-DISTRO_JAR=org.x96.sys.foundation.cs.ir.jar
-
-# Alvos principais
-all: clean build-main build-test coverage-report
-
-# Builds
-build-main:
-	@mkdir -p $(MAIN_BUILD)
-	@javac -d $(MAIN_BUILD) -cp $(CP_MAIN) $(shell find src/main -name "*.java")
-
-build-cli: build-main
-	@mkdir -p $(CLI_BUILD)
-	@javac -d $(CLI_BUILD) -cp $(CP_CLI) $(shell find src/cli -name "*.java" 2>/dev/null || true)
-
-build-test: tools/junit | $(TEST_BUILD)
-	@javac -d $(TEST_BUILD) -cp $(CP_TEST) $(shell find src/test -name "*.java")
-
-# Testes
-test: build-test
-	@java -jar $(JUNIT_JAR) execute \
-	   --class-path $(TEST_BUILD):$(MAIN_BUILD):$(CLI_BUILD):$(CP_MAIN) \
-	   --scan-class-path
-
-# Cobertura
-test-coverage: build-test tools/jacoco | $(COVERAGE_DIR)
-	@echo "📊 Executando testes com cobertura..."
-	@java -javaagent:$(JACOCO_JAR)=destfile=$(COVERAGE_DIR)/jacoco.exec,excludes=java.*:javax.*:sun.*:jdk.*:com.sun.*:org.junit.* \
-	   -jar $(JUNIT_JAR) \
-	   execute \
-	   --class-path $(TEST_BUILD):$(MAIN_BUILD):$(CLI_BUILD):$(CP_MAIN) \
-	   --scan-class-path
-
-coverage-report: test-coverage
-	@echo "📋 Gerando relatório de cobertura..."
-	@java -jar $(JACOCO_CLI) report $(COVERAGE_DIR)/jacoco.exec \
-	   --classfiles $(MAIN_BUILD) \
-	   --sourcefiles src/main \
-	   --html $(COVERAGE_DIR)/html \
-	   --xml $(COVERAGE_DIR)/jacoco.xml \
-	   --csv $(COVERAGE_DIR)/jacoco.csv
-	@echo "✅ Relatório em $(COVERAGE_DIR)/html/index.html"
-
-distro: lib
-	jar cf $(DISTRO_JAR) -C $(MAIN_BUILD) .
-
-# Downloads
-lib:
-	@mkdir -p $(LIB_DIR)
-
-lib/flux: lib
-	@[ -f $(FLUX_JAR) ] || (echo "📦 Baixando FLUX..."; curl -L -o $(FLUX_JAR) $(FLUX_URL))
-
-lib/tokenizer: lib
-	@[ -f $(TOKENIZER_JAR) ] || (echo "📦 Baixando TOKENIZER..."; curl -L -o $(TOKENIZER_JAR) $(TOKENIZER_URL))
-
-tools:
-	@mkdir -p $(TOOL_DIR)
-
-tools/junit: tools
-	@[ -f $(JUNIT_JAR) ] || (echo "📦 Baixando JUnit..."; curl -L -o $(JUNIT_JAR) $(JUNIT_URL))
-
-tools/gjf: tools
-	@[ -f $(GJF_JAR) ] || (echo "📦 Baixando Google Java Format..."; curl -L -o $(GJF_JAR) $(GJF_URL))
-
-tools/jacoco: tools
-	@[ -f $(JACOCO_JAR) ] || (echo "📦 Baixando JaCoCo Agent..."; curl -L -o $(JACOCO_JAR) $(JACOCO_AGENT_URL))
-	@[ -f $(JACOCO_CLI) ] || (echo "📦 Baixando JaCoCo CLI..."; curl -L -o $(JACOCO_CLI) $(JACOCO_CLI_URL))
-
-# Formatação
-format: tools/gjf
-	@find src -name "*.java" -print0 | xargs -0 java -jar $(GJF_JAR) --aosp --replace
-
-# Limpeza
-clean:
-	@rm -rf $(BUILD_DIR)
-
-$(TEST_BUILD) $(COVERAGE_DIR):
+$(TOOLS_DIR) $(LIB_DIR):
 	@mkdir -p $@
+
+JAVA_SOURCES      := $(shell find $(SRC_MAIN) -name "*.java")
+JAVA_TEST_SOURCES := $(shell find $(SRC_TEST) -name "*.java")
+
+CP =
+
+CPT = $(JUNIT_BIN):$(TEST_BUILD):$(MAIN_BUILD)
+
+build: clean/build/main
+	@echo "[☕️] [build] [main] [java] [`javac --version`]"
+	@javac -d $(MAIN_BUILD) $(JAVA_SOURCES)
+	@echo "[🦿] [compiled] at [$(MAIN_BUILD)]"
+
+build/test: clean/build/test build
+	@echo "[☕️] [build] [test] [java] [`javac --version`]"
+	@javac -d $(TEST_BUILD) -cp $(CPT) $(JAVA_TEST_SOURCES)
+	@echo "[🦿] [compiled] at [$(TEST_BUILD)]"
+
+test: kit build/test
+	@java -jar $(JUNIT_BIN) \
+     execute \
+     --class-path $(CPT) \
+     --scan-class-path
+
+coverage-run: build/test
+	java -javaagent:$(JACOCO_AGENT_BIN)=destfile=$(BUILD_DIR)/jacoco.exec \
+       -jar $(JUNIT_BIN) \
+       execute \
+       --class-path $(TEST_BUILD):$(MAIN_BUILD) \
+       --scan-class-path
+
+coverage-report:
+	java -jar $(JACOCO_CLI_BIN) report \
+     $(BUILD_DIR)/jacoco.exec \
+     --classfiles $(MAIN_BUILD) \
+     --sourcefiles $(SRC_MAIN) \
+     --html $(BUILD_DIR)/coverage \
+     --name "Coverage Report"
+
+coverage: coverage-run coverage-report
+	@echo "[📊] [relatório] de cobertura disponível em: build/coverage/index.html"
+	@echo "[🌐] [abrir] com: open out/coverage/index.html"
+
+format:
+	@find src -name "*.java" -print0 | xargs -0 java -jar $(GJF_BIN) --aosp --replace
+	@echo "[🤩] Código formatado com sucesso!"
+
+define deps
+$1/$2: $1
+	@expected="$($3_SHA256)"; \
+	bin="$($3_BIN)"; \
+	url="$($3_URL)"; \
+	tmp="$$$$(mktemp)"; \
+	if [ ! -f "$$$$bin" ]; then \
+		echo "[📦] [🚛] [$($3_VERSION)] [$2]"; \
+		curl -sSL -o "$$$$tmp" "$$$$url"; \
+		actual="$$$$(shasum -a 256 $$$$tmp | awk '{print $$$$1}')"; \
+		if [ "$$$$expected" = "$$$$actual" ]; then mv "$$$$tmp" "$$$$bin"; \
+		echo "[📦] [📍] [$($3_VERSION)] [$2] [🐚]"; else rm "$$$$tmp"; \
+		echo "[❌] [hash mismatch] [$2]"; exit 1; fi; \
+	else \
+		actual="$$$$(shasum -a 256 $$$$bin | awk '{print $$$$1}')"; \
+		if [ "$$$$expected" = "$$$$actual" ]; \
+		then echo "[📦] [📍] [$($3_VERSION)] [🐚] [$2]"; \
+		else \
+			echo "[❌] [hash mismatch] [$2]"; \
+			curl -sSL -o "$$$$tmp" "$$$$url"; \
+			actual="$$$$(shasum -a 256 $$$$tmp | awk '{print $$$$1}')"; \
+			if [ "$$$$expected" = "$$$$actual" ]; then mv "$$$$tmp" "$$$$bin"; \
+			echo "[📦] [♻️] [$($3_VERSION)] [🐚] [$2]"; else rm "$$$$tmp"; \
+			echo "[❌] [download failed] [$2]"; exit 1; fi; \
+		fi; \
+	fi
+endef
+
+kit: \
+	$(TOOLS_DIR)/junit \
+	$(TOOLS_DIR)/gjf \
+	$(TOOLS_DIR)/jacoco_cli \
+	$(TOOLS_DIR)/jacoco_agent
+
+$(eval $(call deps,$(TOOLS_DIR),junit,JUNIT))
+$(eval $(call deps,$(TOOLS_DIR),gjf,GJF))
+$(eval $(call deps,$(TOOLS_DIR),jacoco_cli,JACOCO_CLI))
+$(eval $(call deps,$(TOOLS_DIR),jacoco_agent,JACOCO_AGENT))
+
+clean/build/main:
+	@rm -rf $(MAIN_BUILD)
+	@echo "[🧼] [clean] [$(MAIN_BUILD)]"
+
+clean/build/test:
+	@rm -rf $(TEST_BUILD)
+	@echo "[🧹] [clean] [$(TEST_BUILD)]"

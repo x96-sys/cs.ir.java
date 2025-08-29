@@ -1,13 +1,13 @@
 package org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.archetype;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.x96.sys.foundation.io.TestUtils.assertPrintLn;
 
+import org.junit.jupiter.api.Test;
+
 class ArchetypeTest {
     @Test
-    void happy(){
+    void happy() {
         assertArrayEquals("Archetype".getBytes(), Archetype.Ghost.label().raw());
         assertArrayEquals("Archetype".getBytes(), Archetype.Shell.label().raw());
 

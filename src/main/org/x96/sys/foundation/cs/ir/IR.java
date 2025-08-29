@@ -7,9 +7,10 @@ import java.util.Optional;
 
 public interface IR {
     public Text label();
+
     void prettyPrint(String indent);
 
-    public default  void labelWOcc(Optional<Occurrence> occurrence, String indent) {
+    public default void labelWOcc(Optional<Occurrence> occurrence, String indent) {
         String qtf = occurrence.map(o -> " [" + o.decor() + "]").orElse("");
         System.out.printf("%s%s%s%n", indent, new String(label().raw()), qtf);
     }

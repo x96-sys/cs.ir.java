@@ -12,7 +12,6 @@ public record Track(Nucleus[] nuclei) implements Facet, IR {
 
     public void prettyPrint(String indent) {
         System.out.println(indent + new String(label().raw()));
-        for (Nucleus n : nuclei)
-            n.prettyPrint(" ".repeat(4) + indent);
+        for (Nucleus n : nuclei) n.prettyPrint(" ".repeat(4) + indent);
     }
 }

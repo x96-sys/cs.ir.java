@@ -1,9 +1,9 @@
 package org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.facet.terminals;
 
-import java.util.Optional;
-
 import org.x96.sys.foundation.cs.ir.IR;
 import org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.facet.occurrence.Occurrence;
+
+import java.util.Optional;
 
 public record Trace(Fleck[] flecks, Optional<Occurrence> occurrence) implements Nucleus, Fleck, IR {
     @Override

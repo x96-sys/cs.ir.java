@@ -1,5 +1,8 @@
 package org.x96.sys.foundation.cs.ir.manuscript;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.x96.sys.foundation.io.TestUtils.assertPrintLn;
+
 import org.junit.jupiter.api.Test;
 import org.x96.sys.foundation.cs.ir.manuscript.manifest.Manifest;
 import org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.Characterization;
@@ -12,22 +15,28 @@ import org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.facet.t
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.x96.sys.foundation.io.TestUtils.assertPrintLn;
-
 class ManuscriptTest {
     @Test
     void happy() {
         Text version = new Text("0.1.2".getBytes());
         Identity identity = new Identity("cs".getBytes());
-        Manuscript manuscript = new Manuscript(version, identity, new Manifest[]{
-                new Manifest(new Identity("sc".getBytes()), new Characterization(Optional.of(Archetype.Ghost), new Track(new Nucleus[]{
-                        new Natural(0x3f),
-                        new Text("sc".getBytes())
-                })))
-        });
+        Manuscript manuscript =
+                new Manuscript(
+                        version,
+                        identity,
+                        new Manifest[] {
+                            new Manifest(
+                                    new Identity("sc".getBytes()),
+                                    new Characterization(
+                                            Optional.of(Archetype.Ghost),
+                                            new Track(
+                                                    new Nucleus[] {
+                                                        new Natural(0x3f), new Text("sc".getBytes())
+                                                    })))
+                        });
         assertEquals("Manuscript", new String(manuscript.label().raw()));
-        assertPrintLn("""
+        assertPrintLn(
+                """
                 Manuscript
                     version: 0.1.2
                     primor: cs
@@ -37,6 +46,7 @@ class ManuscriptTest {
                                 Track
                                     Natural > 63
                                     Text > sc\
-                """, () -> manuscript.prettyPrint(""));
+                """,
+                () -> manuscript.prettyPrint(""));
     }
 }

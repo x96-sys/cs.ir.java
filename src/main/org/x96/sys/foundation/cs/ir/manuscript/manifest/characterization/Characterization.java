@@ -1,11 +1,11 @@
 package org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization;
 
-import java.util.Optional;
-
 import org.x96.sys.foundation.cs.ir.IR;
 import org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.archetype.Archetype;
 import org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.facet.Facet;
 import org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.facet.terminals.Text;
+
+import java.util.Optional;
 
 public record Characterization(Optional<Archetype> archetype, Facet facet) implements IR {
     @Override

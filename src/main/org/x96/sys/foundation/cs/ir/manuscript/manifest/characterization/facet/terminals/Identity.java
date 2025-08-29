@@ -10,6 +10,5 @@ public record Identity(byte[] raw) implements IR {
 
     public void prettyPrint(String indent) {
         System.out.printf("%s%s > %s%n", indent, new String(label().raw()), new String(raw));
-
     }
 }

@@ -1,10 +1,9 @@
 package org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.facet.terminals;
 
-import org.junit.jupiter.api.Test;
-import org.x96.sys.foundation.cs.ir.manuscript.manifest.characterization.archetype.Archetype;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.x96.sys.foundation.io.TestUtils.assertPrintLn;
+
+import org.junit.jupiter.api.Test;
 
 class IdentityTest {
 
@@ -14,5 +13,4 @@ class IdentityTest {
         assertEquals("Identity", new String(identity.label().raw()));
         assertPrintLn(":Identity > cs", () -> identity.prettyPrint(":"));
     }
-
 }
